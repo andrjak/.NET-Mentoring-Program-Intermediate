@@ -10,6 +10,8 @@
  */
 
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace MultiThreading.Task4.Threads.Join
 {
@@ -27,6 +29,60 @@ namespace MultiThreading.Task4.Threads.Join
             Console.WriteLine();
 
             // feel free to add your code
+
+            #region Thread & Join
+
+            var thread = new Thread(() => ThreadBody(10));
+            thread.Start();
+            thread.Join();
+            Console.WriteLine("End!");
+
+            void ThreadBody(int value)
+            {
+                Console.WriteLine(value);
+                int localValue = value;
+
+                if (localValue > 0)
+                {
+                    localValue--;
+                    var localThread = new Thread(() => ThreadBody(localValue));
+                    localThread.Start();
+                    localThread.Join();
+                }
+            }
+
+            #endregion
+
+            #region ThreadPool & Semaphore
+
+            Semaphore sem = new(1, 1);
+
+            sem.WaitOne();
+            ThreadPool.QueueUserWorkItem(callBack => ThreadPoolBody(10));
+
+            sem.WaitOne();
+            Console.WriteLine("End!");
+            sem.Release();
+
+            void ThreadPoolBody(int value)
+            {
+                
+                Console.WriteLine(value);
+                int localValue = value;
+
+                if (localValue > 0)
+                {
+                    localValue--;
+                    var localThread = new Thread(() => ThreadPoolBody(localValue));
+                    localThread.Start();
+                }
+                else
+                {
+                    sem.Release();
+                }
+            }
+
+            #endregion
 
             Console.ReadLine();
         }
