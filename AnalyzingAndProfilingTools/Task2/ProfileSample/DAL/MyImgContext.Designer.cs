@@ -1,4 +1,4 @@
-﻿// T4 code generation is enabled for model 'C:\Users\Andrei_Valetka\Desktop\Net intermediate\.NET-Mentoring-Program-Intermediate\AnalyzingAndProfilingTools\ProfileSample-Task2\ProfileSample\DAL\MyImgContext.edmx'. 
+﻿// T4 code generation is enabled for model 'C:\Users\Andrei_Valetka\Desktop\Net intermediate\.NET-Mentoring-Program-Intermediate\AnalyzingAndProfilingTools\Task2\ProfileSample\DAL\MyImgContext.edmx'. 
 // To enable legacy code generation, change the value of the 'Code Generation Strategy' designer
 // property to 'Legacy ObjectContext'. This property is available in the Properties Window when the model
 // is open in the designer.
