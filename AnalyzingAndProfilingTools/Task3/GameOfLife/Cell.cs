@@ -15,8 +15,8 @@ namespace GameOfLife
 
         public Cell(int row, int column, int age, bool alive)
         {
-            PositionX = row * 5;
-            PositionY = column * 5;
+            PositionX = row * Settings.CellSize;
+            PositionY = column * Settings.CellSize;
             Age = age;
             IsAlive = alive;
             

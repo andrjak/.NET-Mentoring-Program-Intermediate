@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using ProfileSample.DAL;
 using ProfileSample.Models;
@@ -11,54 +8,48 @@ namespace ProfileSample.Controllers
 {
     public class HomeController : Controller
     {
+        private const int ImageCount = 20;
+
         public ActionResult Index()
         {
             var context = new ProfileSampleEntities();
 
-            var sources = context.ImgSources.Take(20).Select(x => x.Id);
-            
-            var model = new List<ImageModel>();
+            var sources = context.ImgSources
+                .Take(ImageCount)
+                .ToList();
 
-            foreach (var id in sources)
-            {
-                var item = context.ImgSources.Find(id);
-
-                var obj = new ImageModel()
+            return View(
+                sources.Select(dbImage => new ImageModel()
                 {
-                    Name = item.Name,
-                    Data = item.Data
-                };
-
-                model.Add(obj);
-            } 
-
-            return View(model);
+                    Data = $"data:image/jpg;base64,{System.Convert.ToBase64String(dbImage.Data)}",
+                }
+            ).ToList());
         }
 
+        // Direct call only
         public ActionResult Convert()
         {
             var files = Directory.GetFiles(Server.MapPath("~/Content/Img"), "*.jpg");
 
             using (var context = new ProfileSampleEntities())
             {
-                foreach (var file in files)
+                var imagesToAdd = files.Select(file =>
                 {
                     using (var stream = new FileStream(file, FileMode.Open))
                     {
-                        byte[] buff = new byte[stream.Length];
+                        var buff = new byte[stream.Length];
+                        stream.Read(buff, 0, (int)stream.Length);
 
-                        stream.Read(buff, 0, (int) stream.Length);
-
-                        var entity = new ImgSource()
+                        return new ImgSource()
                         {
                             Name = Path.GetFileName(file),
                             Data = buff,
                         };
-
-                        context.ImgSources.Add(entity);
-                        context.SaveChanges();
                     }
-                } 
+                });
+
+                context.ImgSources.AddRange(imagesToAdd);
+                context.SaveChanges();
             }
 
             return RedirectToAction("Index");
