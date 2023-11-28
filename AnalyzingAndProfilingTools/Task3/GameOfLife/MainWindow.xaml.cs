@@ -6,53 +6,44 @@ namespace GameOfLife
 {
     public partial class MainWindow : Window
     {
-        private Grid mainGrid;
-        DispatcherTimer timer;   //  Generation timer
+        private readonly Grid mainGrid;
+        private readonly DispatcherTimer timer;   //  Generation timer
+        private readonly AdWindow[] adWindows;
         private int genCounter;
-        private AdWindow[] adWindow;
-
 
         public MainWindow()
         {
             InitializeComponent();
             mainGrid = new Grid(MainCanvas);
+            adWindows = new AdWindow[Settings.AdWindowsCount];
 
             timer = new DispatcherTimer();
             timer.Tick += OnTimer;
-            timer.Interval = TimeSpan.FromMilliseconds(200);
+            timer.Interval = TimeSpan.FromMilliseconds(Settings.TimeBetweenGenerations);
         }
 
 
         private void StartAd()
         {
-            
+            for (int i = 0; i < Settings.AdWindowsCount; i++)
             {
-                adWindow = new AdWindow[2];
-                for (int i = 0; i < 2; i++)
+                if (adWindows[i] == null)
                 {
-                    if (adWindow[i] == null)
-                    {
-                        adWindow[i] = new AdWindow(this);
-                        adWindow[i].Closed += AdWindowOnClosed;
-                        adWindow[i].Top = this.Top + (330 * i) + 70;
-                        adWindow[i].Left = this.Left + 240;                        
-                        adWindow[i].Show();
-                    }
+                    adWindows[i] = new AdWindow(this);
+                    adWindows[i].Closed += AdWindowOnClosed;
+                    adWindows[i].Top = this.Top + (330 * i) + 70;
+                    adWindows[i].Left = this.Left + 240;
+                    adWindows[i].Show();
                 }
-                
-                
             }
         }
 
         private void AdWindowOnClosed(object sender, EventArgs eventArgs)
         {
-            for (int i = 0; i < 2; i++)
-            {
-                adWindow[i].Closed -= AdWindowOnClosed;
-                adWindow[i] = null;
-            }
-            
-            
+            var adWindow = sender as AdWindow;
+            adWindow.Closed -= AdWindowOnClosed;
+            var index = Array.IndexOf(adWindows, adWindow);
+            adWindows[index] = null;
         }
 
 
@@ -75,7 +66,7 @@ namespace GameOfLife
         {
             mainGrid.Update();
             genCounter++;
-            lblGenCount.Content = "Generations: " + genCounter;
+            lblGenCount.Content = $"Generations: {genCounter}";
         }
 
         private void ButtonClear_Click(object sender, RoutedEventArgs e)
@@ -83,6 +74,6 @@ namespace GameOfLife
             mainGrid.Clear();
         }
 
-        
+
     }
 }

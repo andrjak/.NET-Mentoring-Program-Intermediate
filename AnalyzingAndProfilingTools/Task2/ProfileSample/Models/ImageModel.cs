@@ -1,11 +1,7 @@
-﻿using System.Collections.Generic;
-
-namespace ProfileSample.Models
+﻿namespace ProfileSample.Models
 {
     public class ImageModel
     {
-        public string Name { get; set; }
-
-        public byte[] Data { get; set; } 
+        public string Data { get; set; } 
     }
 }
